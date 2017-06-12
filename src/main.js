@@ -8,6 +8,8 @@ import store from '@/vuex/store'
 
 import { sync } from 'vuex-router-sync'
 
+import './assets/font/iconfont.css'
+
 FastClick.attach(document.body)
 sync(store, router)
 

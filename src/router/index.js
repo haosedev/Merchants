@@ -2,8 +2,10 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import store from '@/vuex/store'
 
-import Hello from '@/components/Hello'
 import Error from '@/components/Error'
+
+import Hello from '@/components/Hello'
+import H2 from '@/components/H2'
 
 Vue.use(Router)
 
@@ -19,6 +21,10 @@ const router = new Router({
         path: '/',
         name: 'Hello',
         component: Hello
+    }, {
+        path: '/h2',
+        name: 'H2',
+        component: H2
     }, { //** 404页面 */
         path: '*',
         component: Error,
