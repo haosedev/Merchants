@@ -66,89 +66,90 @@
 </template>
 
 <script>
-import {
-    Calendar, Group, Cell, Card, Divider, Tab, TabItem
-} from 'vux'
-export default {
-    components: {
-        Calendar, Group, Cell, Card, Divider, Tab, TabItem,
-    },
-    name: 'home',
-    methods: {
-        tabChange(index) {
-            if (index === 0) {
-                this.dateShow = false;
-                this.dateSelect="TODAY";
-                console.log('获取今日的数据');
-            } else {
-                this.dateShow = true;
-                console.log('启动日期选择，并获取日期的数据');
+    import {
+        Calendar, Group, Cell, Card, Divider, Tab, TabItem
+    } from 'vux'
+    export default {
+        components: {
+            Calendar, Group, Cell, Card, Divider, Tab, TabItem,
+        },
+        name: 'home',
+        methods: {
+            tabChange(index) {
+                if (index === 0) {
+                    this.dateShow = false;
+                    this.dateSelect = "TODAY";
+                    console.log('获取今日的数据');
+                } else {
+                    this.dateShow = true;
+                    console.log('启动日期选择，并获取日期的数据');
+                }
+            },
+            dateChange() {
+                console.log('改变日期：' + this.dateSelect);
             }
         },
-        dateChange() {
-            console.log('改变日期：' + this.dateSelect);
-        }
-    },
-    data() {
-        return {
-            canChangeDate: true,   //可以改变日期，属于权限系统
-            dateShow: false,        //切换后的日期选择框
-            dateSelect: 'TODAY',    //默认是当前日期
-            //
-            version: '0.4.23',
+        data() {
+            return {
+                canChangeDate: true,   //可以改变日期，属于权限系统
+                dateShow: false,        //切换后的日期选择框
+                dateSelect: 'TODAY',    //默认是当前日期
+                //
+                version: '0.4.23',
+            }
         }
     }
-}
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-@import '~vux/src/styles/1px.less';
-.box-flex {
-    display: flex;
-}
+    @import '~vux/src/styles/1px.less';
+    .box-flex {
+        display: flex;
+    }
 
-.box-content {
-    padding: 15px 0;
-}
+    .box-content {
+        padding: 15px 0;
+    }
 
-.top-hr {
-    border-top: 1px solid #E5E5E5;
-}
+    .top-hr {
+        border-top: 1px solid #E5E5E5;
+    }
 
-.card-padding {
-    padding: 20px;
-}
+    .card-padding {
+        padding: 20px;
+    }
 
-.box-flex>div {
-    flex: 1;
-    text-align: center;
-    font-size: 12px;
-}
+    .box-flex>div {
+        flex: 1;
+        text-align: center;
+        font-size: 12px;
+    }
 
-.box-flex .span {
-    padding-top: 5px;
-    color: #f74c31;
-}
+    .box-flex .span {
+        padding-top: 5px;
+        color: #f74c31;
+    }
 
-.income {
-    font-size: 16px;
-    padding-top: 5px;
-}
+    .income {
+        font-size: 16px;
+        padding-top: 5px;
+    }
 
-.income.wxpay {
-    color: #0275d8;
-}
+    .income.wxpay {
+        color: #0275d8;
+    }
 
-.income.alipay {
-    color: #5cb85c;
-}
+    .income.alipay {
+        color: #5cb85c;
+    }
 
-.income.cash {
-    color: #f0ad4e;
-}
+    .income.cash {
+        color: #f0ad4e;
+    }
 
-.income.pos {
-    color: #5bc0de;
-}
+    .income.pos {
+        color: #5bc0de;
+    }
 </style>

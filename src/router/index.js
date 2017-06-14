@@ -5,7 +5,7 @@ import store from '@/vuex/store'
 import Error from '@/components/Error'
 
 import Home from '@/components/Home'
-import H2 from '@/components/H2'
+import Cart from '@/components/Cart'
 
 Vue.use(Router)
 
@@ -16,15 +16,14 @@ history.setItem('/', 0)
 
 
 const router = new Router({
-    mode: 'history',
     routes: [{
         path: '/',
-        name: 'Home',
+        name: '首页',
         component: Home
     }, {
-        path: '/h2',
-        name: 'H2',
-        component: H2
+        path: '/Cart',
+        name: '购物车',
+        component: Cart
     }, { //** 404页面 */
         path: '*',
         component: Error,
