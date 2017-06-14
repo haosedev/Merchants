@@ -4,7 +4,7 @@ import store from '@/vuex/store'
 
 import Error from '@/components/Error'
 
-import Hello from '@/components/Hello'
+import Home from '@/components/Home'
 import H2 from '@/components/H2'
 
 Vue.use(Router)
@@ -19,8 +19,8 @@ const router = new Router({
     mode: 'history',
     routes: [{
         path: '/',
-        name: 'Hello',
-        component: Hello
+        name: 'Home',
+        component: Home
     }, {
         path: '/h2',
         name: 'H2',

@@ -1,0 +1,154 @@
+<template>
+    <div>
+        <tab>
+            <tab-item selected @on-item-click="tabChange">今日</tab-item>
+            <tab-item @on-item-click="tabChange" :disabled="!canChangeDate">历史记录</tab-item>
+        </tab>
+        <group v-show="!dateShow">
+            <cell title="当前日期" :value="dateSelect"></cell>
+        </group>
+        <group v-show="dateShow">
+            <calendar v-model="dateSelect" title="选择日期" @on-change="dateChange" disable-future></calendar>
+        </group>
+        <card :header="{title:'我的销售'}">
+            <div slot="content" class="box-flex box-content">
+                <div class="vux-1px-l vux-1px-r">
+                    <div class="span">0</div>
+                    <div class="income">订单数量</div>
+                </div>
+                <div>
+                    <div class="span">￥0.00</div>
+                    <div class="income">总收入</div>
+                </div>
+            </div>
+            <div slot="content" class="box-flex box-content top-hr">
+                <div class="vux-1px-l vux-1px-r">
+                    <div class="span">0</div>
+                    <div class="income">销售数量</div>
+                </div>
+                <div>
+                    <div class="span">0</div>
+                    <div class="income">退货数量</div>
+                </div>
+            </div>
+        </card>
+        <card :header="{title:'我的收入'}">
+            <div slot="content" class="box-flex box-content">
+                <div class="vux-1px-l vux-1px-r">
+                    <div class="span">￥0.00</div>
+                    <div class="income pos">POS机</div>
+                </div>
+                <div>
+                    <div class="span">￥0.00</div>
+                    <div class="income cash">现金收入</div>
+                </div>
+            </div>
+            <div slot="content" class="box-flex box-content top-hr">
+                <div class="vux-1px-l vux-1px-r">
+                    <div class="span">￥0.00</div>
+                    <div class="income alipay">支付宝码</div>
+                </div>
+                <div>
+                    <div class="span">￥0.00</div>
+                    <div class="income wxpay">微信扫码</div>
+                </div>
+            </div>
+        </card>
+        <card>
+            <div slot="content" class="card-padding">
+                <p style="color:#999;font-size:12px;">
+                    软件版本：{{version}}
+                    <br/> 技术支持：温州仟胜信息科技有限公司
+                </p>
+            </div>
+        </card>
+    </div>
+</template>
+
+<script>
+import {
+    Calendar, Group, Cell, Card, Divider, Tab, TabItem
+} from 'vux'
+export default {
+    components: {
+        Calendar, Group, Cell, Card, Divider, Tab, TabItem,
+    },
+    name: 'home',
+    methods: {
+        tabChange(index) {
+            if (index === 0) {
+                this.dateShow = false;
+                this.dateSelect="TODAY";
+                console.log('获取今日的数据');
+            } else {
+                this.dateShow = true;
+                console.log('启动日期选择，并获取日期的数据');
+            }
+        },
+        dateChange() {
+            console.log('改变日期：' + this.dateSelect);
+        }
+    },
+    data() {
+        return {
+            canChangeDate: true,   //可以改变日期，属于权限系统
+            dateShow: false,        //切换后的日期选择框
+            dateSelect: 'TODAY',    //默认是当前日期
+            //
+            version: '0.4.23',
+        }
+    }
+}
+</script>
+
+<!-- Add "scoped" attribute to limit CSS to this component only -->
+<style scoped lang="less">
+@import '~vux/src/styles/1px.less';
+.box-flex {
+    display: flex;
+}
+
+.box-content {
+    padding: 15px 0;
+}
+
+.top-hr {
+    border-top: 1px solid #E5E5E5;
+}
+
+.card-padding {
+    padding: 20px;
+}
+
+.box-flex>div {
+    flex: 1;
+    text-align: center;
+    font-size: 12px;
+}
+
+.box-flex .span {
+    padding-top: 5px;
+    color: #f74c31;
+}
+
+.income {
+    font-size: 16px;
+    padding-top: 5px;
+}
+
+.income.wxpay {
+    color: #0275d8;
+}
+
+.income.alipay {
+    color: #5cb85c;
+}
+
+.income.cash {
+    color: #f0ad4e;
+}
+
+.income.pos {
+    color: #5bc0de;
+}
+</style>
