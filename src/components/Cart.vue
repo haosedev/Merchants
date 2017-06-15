@@ -1,7 +1,8 @@
 <template>
     <div>
-        <search @result-click="resultClick" @on-change="getResult" :results="results" v-model="searchData" auto-scroll-to-top top="46px" position="absolute" @on-focus="onFocus" @on-cancel="onCancel" @on-submit="onSubmit" ref="search"></search>
-        <div style="padding:5px 5px 20px 5px;">
+        <search @result-click="resultClick" @on-change="getResult" :results="results" v-model="searchData" auto-scroll-to-top top="46px"
+            position="absolute" @on-focus="onFocus" @on-cancel="onCancel" @on-submit="onSubmit" ref="search"></search>
+        <div style="padding:5px;">
             <flexbox>
                 <flexbox-item>
                     <div class="btn" @click="add">
@@ -23,65 +24,34 @@
                 </flexbox-item>
             </flexbox>
         </div>
-        <div class="hasCarts">
+        <div class="hasCarts" v-show="hasGoods">
+            <swipeout>
+                <swipeout-item transition-mode="follow" v-for="(vo, index) in dCartList" :key="vo.id">
+                    <div slot="right-menu">
+                        <swipeout-button @click.native="edit(index, vo.id)" type="primary">编辑</swipeout-button>
+                        <swipeout-button @click.native="del(index, vo.id)" type="warn">删除</swipeout-button>
+                    </div>
+                    <div slot="content" class="demo-content vux-1px-t">
+                        <group>
+                            <cell :title="vo.name" class="goods_name_bk"></cell>
+                            <cell title="单价" :value="vo.price" :inline-desc="vo.mprice" class="goods_bk"></cell>
+                            <cell title="数量" :value="vo.num" class="goods_bk"></cell>
+                            <cell title="合计" :value="vo.total" class="goods_total_bk"></cell>
+                        </group>
+                    </div>
+                </swipeout-item>
+            </swipeout>
             <!--这里是购物车商品列表，需要有 编辑，和删除 按钮，要求样式简洁美观 商品名称，原价，单价，数量，总计-->
-            <div class="vux-form-preview weui-form-preview" style="margin-bottom:10px;">
-                <div class="weui-form-preview__hd">
-                    <label class="weui-form-preview__label">商品xxxxx</label>
-                    <em class="weui-form-preview__value">￥9.00</em>
-                </div>
-                <div class="weui-form-preview__bd">
-                    <div class="weui-form-preview__item">
-                        <label class="weui-form-preview__label">原价</label>
-                        <span class="weui-form-preview__value">￥10.00</span>
-                    </div>
-                    <div class="weui-form-preview__item">
-                        <label class="weui-form-preview__label">单价</label>
-                        <span class="weui-form-preview__value">￥9.00</span>
-                    </div>
-                    <div class="weui-form-preview__item">
-                        <label class="weui-form-preview__label">数量</label>
-                        <span class="weui-form-preview__value">1</span>
-                    </div>
-                </div>
-                <div class="weui-form-preview__ft">
-                    <button @click="edit(0)" class="weui-form-preview__btn weui-form-preview__btn_primary">编辑</button>
-                    <button @click="del(0)" class="weui-form-preview__btn important_warn">删除</button>
-                </div>
-            </div>
-            <div class="vux-form-preview weui-form-preview">
-                <div class="weui-form-preview__hd">
-                    <label class="weui-form-preview__label">商品xxxxx</label>
-                    <em class="weui-form-preview__value">￥9.00</em>
-                </div>
-                <div class="weui-form-preview__bd">
-                    <div class="weui-form-preview__item">
-                        <label class="weui-form-preview__label">原价</label>
-                        <span class="weui-form-preview__value">￥10.00</span>
-                    </div>
-                    <div class="weui-form-preview__item">
-                        <label class="weui-form-preview__label">单价</label>
-                        <span class="weui-form-preview__value">￥9.00</span>
-                    </div>
-                    <div class="weui-form-preview__item">
-                        <label class="weui-form-preview__label">数量</label>
-                        <span class="weui-form-preview__value">1</span>
-                    </div>
-                </div>
-                <div class="weui-form-preview__ft">
-                    <button @click="edit(1)" class="weui-form-preview__btn weui-form-preview__btn_primary">编辑</button>
-                    <button @click="del(1)" class="weui-form-preview__btn important_warn">删除</button>
-                </div>
-            </div>
+
             <group title="结算">
-                <cell title="数量" class="totalBk">
+                <cell title="总数量" class="totalBk">
                     <div slot="value">
-                        <span>x 1</span>
+                        <span>x {{totalnum}}</span>
                     </div>
                 </cell>
                 <cell title="总价格" class="totalBk">
                     <div slot="value">
-                        <span style="color: red">￥128.00</span>
+                        <span style="color: red">￥{{totalmoney}}</span>
                     </div>
                 </cell>
             </group>
@@ -110,131 +80,204 @@
                 </flexbox>
             </div>
         </div>
+        <div class="" v-show="!hasGoods">
+            <br/>
+            <br/>
+            <load-more :show-loading="false" tip="购物车为空" background-color="#fbf9fe"></load-more>
+        </div>
     </div>
 </template>
 
 <script>
-import {
-    Search,
-    Flexbox,
-    FlexboxItem,
-    Group,
-    Cell,
-    Divider
-
-} from 'vux'
-export default {
-    components: {
+    import {
+        LoadMore,
+        Swipeout,
+        SwipeoutItem,
+        SwipeoutButton,
         Search,
         Flexbox,
         FlexboxItem,
         Group,
         Cell,
         Divider,
-    },
-    name: 'cart',
-    methods: {
-        scan(){
-            console.log('SCAN');
-            this.searchData = "scan";
+        numberComma
+
+    } from 'vux'
+    export default {
+        components: {
+            LoadMore,
+            Swipeout,
+            SwipeoutItem,
+            SwipeoutButton,
+            Search,
+            Flexbox,
+            FlexboxItem,
+            Group,
+            Cell,
+            Divider,
         },
-        clear(){
-            console.log("CLEAR");
+        name: 'cart',
+        methods: {
+            scan() {
+                console.log('SCAN');
+                this.searchData = "scan";
+            },
+            clear() {
+                console.log("CLEAR");
+            },
+            add() {
+                console.log('ADD');
+            },
+            edit(index, id) {
+                console.log('EDIT' + id);
+            },
+            del(index, id) {
+                console.log('DEL:' + id);
+                this.cartList.splice(index, 1);
+            },
+            setFocus() {
+                this.$refs.search.setFocus()
+            },
+            resultClick(item) {
+                window.alert('you click the result item: ' + JSON.stringify(item))
+            },
+            getResult(val) {
+                this.results = val ? getResult(this.value) : []
+            },
+            onSubmit() {
+                this.$refs.search.setBlur()
+                this.$vux.toast.show({
+                    type: 'text',
+                    position: 'top',
+                    text: 'on submit'
+                })
+            },
+            onFocus() {
+                console.log('on focus')
+            },
+            onCancel() {
+                console.log('on cancel')
+            },
+            onButtonClick(type, index, key) {
+                console.log(index + "=");
+                console.log(key);
+            },
         },
-        add(){
-            console.log('ADD');
+        computed: {
+            dCartList() {
+                //**既然无法再列表中直接植入，只能处理数组了
+                if (this.cartList.length > 0) {
+                    this.hasGoods = true;
+                } else {
+                    this.hasGoods = false;
+                }
+                var temp=[];
+                this.totalmoney = 0;
+                this.totalnum = 0;
+                for (var i = 0; i < this.cartList.length; i++) {
+                    this.totalmoney += parseFloat(this.cartList[i].total);
+                    this.totalnum += parseFloat(this.cartList[i].num);
+                    var id = i + 1;
+                    var tmp={};
+                    tmp.id = i;
+                    tmp.name = id + '.' + this.cartList[i].name;
+                    tmp.total = '￥' + this.cartList[i].total;
+                    tmp.price = '￥' + this.cartList[i].price;
+                    tmp.mprice = '原价 ￥' + this.cartList[i].mprice;
+                    temp.push(tmp);
+                }
+                this.totalmoney = numberComma(this.totalmoney);
+                this.totalnum = numberComma(this.totalnum);
+                return temp;
+            }
         },
-        edit(id) {
-            console.log('EDIT' + id);
-        },
-        del(id) {
-            console.log('DEL:' + id);
-        },
-        setFocus() {
-            this.$refs.search.setFocus()
-        },
-        resultClick(item) {
-            window.alert('you click the result item: ' + JSON.stringify(item))
-        },
-        getResult(val) {
-            this.results = val ? getResult(this.value) : []
-        },
-        onSubmit() {
-            this.$refs.search.setBlur()
-            this.$vux.toast.show({
-                type: 'text',
-                position: 'top',
-                text: 'on submit'
-            })
-        },
-        onFocus() {
-            console.log('on focus')
-        },
-        onCancel() {
-            console.log('on cancel')
-        }
-    },
-    data() {
-        return {
-            searchData: '',
-            result: [],
-            cartList: [{
-                label: '商品一号',
-                value: '￥10.00'
-            }, {
-                label: 'Banana',
-                value: '1.04'
-            }, {
-                label: 'Fish',
-                value: '8.00'
-            }],
+        data() {
+            return {
+                hasGoods: false,
+                searchData: '',
+                result: [],
+                totalnum: 0,
+                totalmoney: 0,
+                cartList: [{
+                    name: '商品1号',
+                    price: '10.00',
+                    mprice: '15.00',
+                    num: 1,
+                    total: '10.00',
+                }, {
+                    name: '商品3号',
+                    price: '1.00',
+                    mprice: '2.00',
+                    num: 1,
+                    total: '1.00',
+                }, {
+                    name: '商品2号',
+                    price: '8.50',
+                    mprice: '10.00',
+                    num: 1,
+                    total: '8.50',
+                }],
+                showContent004: false,
+            }
         }
     }
-}
-function getResult (val) {
-  let rs = []
-  for (let i = 0; i < 20; i++) {
-    rs.push({
-      title: `${val} result: ${i + 1} `,
-      other: i
-    })
-  }
-  return rs
-}
+    function getResult(val) {
+        let rs = []
+        for (let i = 0; i < 20; i++) {
+            rs.push({
+                title: `${val} result: ${i + 1} `,
+                other: i
+            })
+        }
+        return rs
+    }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-@import '~vux/src/styles/1px.less';
-.btn {
-    text-align: center;
-    background-color: #4BAAFB;
-    padding: 5px 0;
-    border-radius: 10px;
-}
+    @import '~vux/src/styles/1px.less';
+    .btn {
+        text-align: center;
+        background-color: #4BAAFB;
+        padding: 5px 0;
+        border-radius: 10px;
+    }
 
-.btn .icon {
-    font-size: 24px;
-    height: 32px;
-    color: #FFF;
-}
+    .btn .icon {
+        font-size: 24px;
+        height: 32px;
+        color: #FFF;
+    }
 
-.btn .lab {
-    font-size: 12px;
-    color: #FFF;
-}
+    .btn .lab {
+        font-size: 12px;
+        color: #FFF;
+    }
 
-.btn-group {
-    padding: 20px 5px 20px 5px;
-    background-color: #DEFFCA;
-}
+    .btn-group {
+        padding: 20px 5px 20px 5px;
+        background-color: #FFDBA5;
+    }
 
-.totalBk {
-    background-color: #DEFFCA;
-}
+    .totalBk {
+        background-color: #FFDBA5;
+    }
 
-.important_warn {
-    background-color: #D84949;
-    color: #FFF;
-}
+    .goods_name_bk {
+        background-color: #EFF598;
+    }
+
+    .goods_bk {
+        background-color: #F8FBD2;
+    }
+
+    .goods_total_bk {
+        background-color: #DEFFCA;
+    }
+
+    .important_warn {
+        background-color: #D84949;
+        color: #FFF;
+    }
 </style>

@@ -79,10 +79,8 @@
                 if (index === 0) {
                     this.dateShow = false;
                     this.dateSelect = "TODAY";
-                    console.log('获取今日的数据');
                 } else {
                     this.dateShow = true;
-                    console.log('启动日期选择，并获取日期的数据');
                 }
             },
             dateChange() {
@@ -95,7 +93,7 @@
                 dateShow: false,        //切换后的日期选择框
                 dateSelect: 'TODAY',    //默认是当前日期
                 //
-                version: '0.4.35',
+                version: '0.4.46',
             }
         }
     }
