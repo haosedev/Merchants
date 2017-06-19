@@ -51,7 +51,8 @@
                 </cell>
                 <cell title="总价格" class="totalBk">
                     <div slot="value">
-                        <span style="color: red">￥{{totalmoney}}</span>
+                        <span style="color: red;font-weight:bold;">￥<countup :end-val="totalmoney" :duration="2" :decimals="2" class="demo1"></countup></span>
+                        
                     </div>
                 </cell>
             </group>
@@ -100,6 +101,7 @@
         Group,
         Cell,
         Divider,
+        Countup,
         numberComma
 
     } from 'vux'
@@ -115,6 +117,7 @@
             Group,
             Cell,
             Divider,
+            Countup,
         },
         name: 'cart',
         methods: {
@@ -126,10 +129,14 @@
                 console.log("CLEAR");
             },
             add() {
+                //**根据搜索内容进行 add
                 console.log('ADD');
+                this.$router.push('/eCart');;
             },
             edit(index, id) {
-                console.log('EDIT' + id);
+                //**根据点击id进行edit
+                var name= this.cartList[id].name;
+                console.log('EDIT:' + name);
             },
             del(index, id) {
                 console.log('DEL:' + id);

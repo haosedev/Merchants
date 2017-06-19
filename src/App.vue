@@ -77,7 +77,7 @@
                         this.$router.push('/');
                         break;
                     case 'menu2':
-                        this.$router.push('/h2');
+                        this.$router.push('/Cart');
                         break;
                     case 'menu3':
                         console.log('3 unset');

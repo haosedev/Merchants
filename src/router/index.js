@@ -6,6 +6,7 @@ import Error from '@/components/Error'
 
 import Home from '@/components/Home'
 import Cart from '@/components/Cart'
+import eCart from '@/components/eCart'
 
 Vue.use(Router)
 
@@ -24,6 +25,10 @@ const router = new Router({
         path: '/Cart',
         name: '购物车',
         component: Cart
+    }, {
+        path: '/eCart',
+        name: '商品操作',
+        component: eCart
     }, { //** 404页面 */
         path: '*',
         component: Error,
@@ -31,7 +36,7 @@ const router = new Router({
 })
 
 //注册全局钩子，用于处理路径分级，判断路径变化到底是属于前进还是后退
-router.beforeEach(function(to, from, next) {
+router.beforeEach(function (to, from, next) {
     store.commit('updateLoadingStatus', { isLoading: true })
 
     const toIndex = history.getItem(to.path)
@@ -58,7 +63,7 @@ router.beforeEach(function(to, from, next) {
     }
 })
 
-router.afterEach(function(to) {
+router.afterEach(function (to) {
     store.commit('updateLoadingStatus', { isLoading: false })
     if (process.env.NODE_ENV === 'production') {
         //这里可以记录页面跳转
