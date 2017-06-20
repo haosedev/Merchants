@@ -44,6 +44,7 @@
             <!--这里是购物车商品列表，需要有 编辑，和删除 按钮，要求样式简洁美观 商品名称，原价，单价，数量，总计-->
 
             <group title="结算">
+                <x-switch title="抹零" v-model="moling"></x-switch>
                 <cell title="总数量" class="totalBk">
                     <div slot="value">
                         <span>x {{totalnum}}</span>
@@ -52,7 +53,7 @@
                 <cell title="总价格" class="totalBk">
                     <div slot="value">
                         <span style="color: red;font-weight:bold;">￥<countup :end-val="totalmoney" :duration="2" :decimals="2" class="demo1"></countup></span>
-                        
+
                     </div>
                 </cell>
             </group>
@@ -100,10 +101,8 @@
         FlexboxItem,
         Group,
         Cell,
-        Divider,
-        Countup,
-        numberComma
-
+        XSwitch,
+        Countup
     } from 'vux'
     export default {
         components: {
@@ -116,7 +115,7 @@
             FlexboxItem,
             Group,
             Cell,
-            Divider,
+            XSwitch,
             Countup,
         },
         name: 'cart',
@@ -135,7 +134,7 @@
             },
             edit(index, id) {
                 //**根据点击id进行edit
-                var name= this.cartList[id].name;
+                var name = this.cartList[id].name;
                 console.log('EDIT:' + name);
             },
             del(index, id) {
@@ -178,23 +177,25 @@
                 } else {
                     this.hasGoods = false;
                 }
-                var temp=[];
+                var temp = [];
                 this.totalmoney = 0;
                 this.totalnum = 0;
                 for (var i = 0; i < this.cartList.length; i++) {
                     this.totalmoney += parseFloat(this.cartList[i].total);
                     this.totalnum += parseFloat(this.cartList[i].num);
                     var id = i + 1;
-                    var tmp={};
+                    var tmp = {};
                     tmp.id = i;
                     tmp.name = id + '.' + this.cartList[i].name;
+                    tmp.num = this.cartList[i].num;
                     tmp.total = '￥' + this.cartList[i].total;
                     tmp.price = '￥' + this.cartList[i].price;
-                    tmp.mprice = '原价 ￥' + this.cartList[i].mprice;
+                    tmp.mprice = '原价 ￥' + this.cartList[i].mprice + '  折扣：' + this.cartList[i].zhekou;
                     temp.push(tmp);
                 }
-                this.totalmoney = numberComma(this.totalmoney);
-                this.totalnum = numberComma(this.totalnum);
+                if (this.moling) {
+                    this.totalmoney = parseInt(this.totalmoney);
+                }
                 return temp;
             }
         },
@@ -203,25 +204,30 @@
                 hasGoods: false,
                 searchData: '',
                 result: [],
+                moling: false,
                 totalnum: 0,
                 totalmoney: 0,
+                nc_totalmoney: 0,
                 cartList: [{
                     name: '商品1号',
                     price: '10.00',
                     mprice: '15.00',
                     num: 1,
+                    zhekou: 10,
                     total: '10.00',
                 }, {
                     name: '商品3号',
                     price: '1.00',
                     mprice: '2.00',
                     num: 1,
+                    zhekou: 10,
                     total: '1.00',
                 }, {
                     name: '商品2号',
                     price: '8.50',
                     mprice: '10.00',
                     num: 1,
+                    zhekou: 10,
                     total: '8.50',
                 }],
                 showContent004: false,
