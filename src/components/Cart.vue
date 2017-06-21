@@ -1,7 +1,8 @@
 <template>
     <div>
-        <search @result-click="resultClick" @on-change="getResult" :results="results" v-model="searchData" auto-scroll-to-top top="46px"
-            position="absolute" @on-focus="onFocus" @on-cancel="onCancel" @on-submit="onSubmit" ref="search"></search>
+        <search :results="results" v-model="searchData" :auto-fixed="false" top="46px" @on-focus="onFocus" @on-cancel="onCancel"
+            ref="search"></search>
+
         <div style="padding:5px;">
             <flexbox>
                 <flexbox-item>
@@ -128,9 +129,29 @@
                 console.log("CLEAR");
             },
             add() {
-                //**根据搜索内容进行 add
-                console.log('ADD');
-                this.$router.push('/eCart');;
+                //**根据搜索内容进行 **带个参数
+                if (this.searchData != '') {
+                    console.log('ADD:' + this.searchData);
+                    this.$router.push({ path: '/eCart/' + this.searchData });
+                } else {
+                    // this.$vux.alert.show({
+                    //     title: '提示',
+                    //     content: '添加商品时，需要在搜索框内输入【条码】或【货号】',
+                    //     onShow() {
+                    //         console.log('Plugin: I\'m showing')
+                    //     },
+                    //     onHide() {
+                    //         console.log('Plugin: I\'m hiding now')
+                    //     }
+                    // })
+                    this.$vux.toast.show({
+                        type: 'text',
+                        position: 'middle',
+                        width: '260px',
+                        time: 3000,
+                        text: '添加商品时，需要在搜索框内输入【条码】或【货号】'
+                    })
+                }
             },
             edit(index, id) {
                 //**根据点击id进行edit

@@ -1,37 +1,8 @@
 <template>
-    <div>
-        <tab>
-            <tab-item selected @on-item-click="tabChange">今日</tab-item>
-            <tab-item @on-item-click="tabChange" :disabled="!canChangeDate">历史记录</tab-item>
-        </tab>
-        <group v-show="!dateShow">
-            <cell title="当前日期" :value="dateSelect"></cell>
-        </group>
-        <group v-show="dateShow">
+    <div style="padding-bottom:20px;">
+        <group>
             <calendar v-model="dateSelect" title="选择日期" @on-change="dateChange" disable-future></calendar>
         </group>
-        <card :header="{title:'我的销售'}">
-            <div slot="content" class="box-flex box-content">
-                <div class="vux-1px-l vux-1px-r">
-                    <div class="span">0</div>
-                    <div class="income">订单数量</div>
-                </div>
-                <div>
-                    <div class="span">￥0.00</div>
-                    <div class="income">总收入</div>
-                </div>
-            </div>
-            <div slot="content" class="box-flex box-content top-hr">
-                <div class="vux-1px-l vux-1px-r">
-                    <div class="span">0</div>
-                    <div class="income">销售数量</div>
-                </div>
-                <div>
-                    <div class="span">0</div>
-                    <div class="income">退货数量</div>
-                </div>
-            </div>
-        </card>
         <card :header="{title:'我的收入'}">
             <div slot="content" class="box-flex box-content">
                 <div class="vux-1px-l vux-1px-r">
@@ -54,13 +25,12 @@
                 </div>
             </div>
         </card>
-        <card>
-            <div slot="content" class="card-padding">
-                <p style="color:#999;font-size:12px;">
-                    软件版本：{{version}}
-                    <br/> 技术支持：温州仟胜信息科技有限公司
-                </p>
-            </div>
+        <card v-for="(vo, index) in orderList" :key="vo.id" :header="{title: vo.times }" :footer="{title:'订单详情', link:'/Order/'+vo.sn }">
+            <p slot="content" class="card-info">
+                <span>单号：{{vo.sn}}</span><br/>
+                <span>方式：{{vo.type}}</span><br/>
+                <span>金额：￥{{vo.money}}</span>
+            </p>
         </card>
     </div>
 </template>
@@ -75,25 +45,29 @@
         },
         name: 'home',
         methods: {
-            tabChange(index) {
-                if (index === 0) {
-                    this.dateShow = false;
-                    this.dateSelect = "TODAY";
-                } else {
-                    this.dateShow = true;
-                }
-            },
             dateChange() {
                 console.log('改变日期：' + this.dateSelect);
-            }
+            },
         },
         data() {
             return {
-                canChangeDate: true,   //可以改变日期，属于权限系统
-                dateShow: false,        //切换后的日期选择框
                 dateSelect: 'TODAY',    //默认是当前日期
-                //
-                version: '0.4.66',
+                orderList: [{
+                    sn: '100000011111',
+                    type: '现金',
+                    money: '10.00',
+                    times: '2017-6-21 16:55:20',
+                }, {
+                    sn: '1000000111222',
+                    type: 'POS机',
+                    money: '10.00',
+                    times: '2017-6-21 16:55:20',
+                }, {
+                    sn: '100000011333',
+                    type: '支付宝',
+                    money: '10.00',
+                    times: '2017-6-21 16:55:20',
+                }],
             }
         }
     }
@@ -117,6 +91,11 @@
 
     .card-padding {
         padding: 20px;
+    }
+
+    .card-info {
+        padding: 10px 20px;
+        font-size: 14px;
     }
 
     .box-flex>div {

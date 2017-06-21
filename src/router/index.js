@@ -7,6 +7,14 @@ import Error from '@/components/Error'
 import Home from '@/components/Home'
 import Cart from '@/components/Cart'
 import eCart from '@/components/eCart'
+import Lists from '@/components/Lists'
+import Order from '@/components/Order'
+
+//Vux Alert插件和Toast插件
+import  { AlertPlugin } from 'vux'
+Vue.use(AlertPlugin)
+import  { ToastPlugin } from 'vux'
+Vue.use(ToastPlugin)
 
 Vue.use(Router)
 
@@ -26,10 +34,18 @@ const router = new Router({
         name: '购物车',
         component: Cart
     }, {
-        path: '/eCart',
+        path: '/eCart/:searchData',
         name: '商品操作',
         component: eCart
-    }, { //** 404页面 */
+    }, {
+        path: '/Lists',
+        name: '订单列表',
+        component: Lists
+    }, {
+        path: '/Order/:sn',
+        name: '订单详情',
+        component: Order
+    },  { //** 404页面 */
         path: '*',
         component: Error,
     }]

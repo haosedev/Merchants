@@ -26,7 +26,7 @@
                         <span class="black">购物车</span>
                     </span>
                 </tabbar-item>
-                <tabbar-item :link="{path:'/Orders'}" :selected="route.path === '/Orders'">
+                <tabbar-item :link="{path:'/Lists'}" :selected="route.path === '/Lists'">
                     <span class="icon-liebiao-copy icon" slot="icon" style="position:relative;top: -4px;left:-2px"></span>
                     <span class="black" slot="label">订单列表</span>
                 </tabbar-item>
@@ -80,7 +80,7 @@
                         this.$router.push('/Cart');
                         break;
                     case 'menu3':
-                        console.log('3 unset');
+                        this.$router.push('/Lists');
                         break;
                     case 'menu4':
                         console.log('4 unset');

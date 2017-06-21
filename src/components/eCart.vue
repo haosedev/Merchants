@@ -42,6 +42,9 @@
         },
         name: 'ecart',
         methods: {
+            getSearchData() {
+                return $route.params.searchData;
+            },
             zhekou_change(val) {
                 //console.log('折扣改变：' + val + '折');
                 //console.log('dd:' + this.zhekou);
@@ -54,12 +57,13 @@
             total_price() {
                 return this.in_price * this.num * this.zhekou / 10;
             },
-            eCartName(){
+            eCartName() {
                 return '添加商品到购物车'; //编辑购物车商品
             }
         },
         data() {
             return {
+
                 name: '第一商品',
                 pn: '01',
                 bc: '1234',
