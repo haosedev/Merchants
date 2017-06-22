@@ -4121,7 +4121,7 @@ vux-blazy@^1.6.4:
   version "1.6.4"
   resolved "https://registry.yarnpkg.com/vux-blazy/-/vux-blazy-1.6.4.tgz#e33073d902e0a3844ef1a463cce3ca2e0aab47bf"
 
-vux-loader@^1.0.61:
+vux-loader@^1.0.68:
   version "1.0.68"
   resolved "https://registry.yarnpkg.com/vux-loader/-/vux-loader-1.0.68.tgz#307afff33ecf7c0d61b98974db99fac857bf630c"
   dependencies:

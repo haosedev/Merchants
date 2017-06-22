@@ -10,12 +10,6 @@ import eCart from '@/components/eCart'
 import Lists from '@/components/Lists'
 import Order from '@/components/Order'
 
-//Vux Alert插件和Toast插件
-import  { AlertPlugin } from 'vux'
-Vue.use(AlertPlugin)
-import  { ToastPlugin } from 'vux'
-Vue.use(ToastPlugin)
-
 Vue.use(Router)
 
 const history = window.sessionStorage
@@ -45,14 +39,14 @@ const router = new Router({
         path: '/Order/:sn',
         name: '订单详情',
         component: Order
-    },  { //** 404页面 */
+    }, { //** 404页面 */
         path: '*',
         component: Error,
     }]
 })
 
 //注册全局钩子，用于处理路径分级，判断路径变化到底是属于前进还是后退
-router.beforeEach(function (to, from, next) {
+router.beforeEach(function(to, from, next) {
     store.commit('updateLoadingStatus', { isLoading: true })
 
     const toIndex = history.getItem(to.path)
@@ -79,13 +73,12 @@ router.beforeEach(function (to, from, next) {
     }
 })
 
-router.afterEach(function (to) {
+router.afterEach(function(to) {
     store.commit('updateLoadingStatus', { isLoading: false })
     if (process.env.NODE_ENV === 'production') {
         //这里可以记录页面跳转
     }
 })
-
 
 
 export default router;

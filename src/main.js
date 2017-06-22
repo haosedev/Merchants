@@ -15,6 +15,11 @@ sync(store, router)
 
 Vue.config.productionTip = false
 
+//Vux Alert插件和Toast插件
+import { AlertPlugin, ToastPlugin } from 'vux'
+Vue.use(AlertPlugin)
+Vue.use(ToastPlugin)
+
 /* eslint-disable no-new */
 new Vue({
     store,
