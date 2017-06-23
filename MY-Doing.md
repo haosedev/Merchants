@@ -1,5 +1,7 @@
 ##### 这个文件用于记录最新版本号，需要更新的问题。以及打算制作的问题 #####
 ## Merchants ##
+* 2017.6.23
+* Version:0.5.77
 * 2017.6.22
 * Version:0.4.69
 * 2017.6.21
@@ -79,7 +81,10 @@
 
 
 
-
+###开始对接数据，使用axios+qs
+axios作为ajax获取工具
+qs作为参数生成器，因为PHP，不能接受axios的FORMDATA
+回去先要 yarn install 自动新增axios，或者使用 yarn add axios
 
 
 
