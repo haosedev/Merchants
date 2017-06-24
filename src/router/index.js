@@ -28,7 +28,7 @@ const router = new Router({
         name: '购物车',
         component: Cart
     }, {
-        path: '/eCart/:searchData',
+        path: '/eCart',
         name: '商品操作',
         component: eCart
     }, {

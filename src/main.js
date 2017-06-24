@@ -27,5 +27,7 @@ new Vue({
     render: h => h(App)
 }).$mount('#app')
 
+//跨域使用同样的session
+axios.defaults.withCredentials=true;
 Vue.prototype.$http = axios
 Vue.prototype.$qs = qs

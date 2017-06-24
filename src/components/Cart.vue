@@ -37,7 +37,7 @@
                             <cell :title="vo.name" class="goods_name_bk"></cell>
                             <cell title="单价" :value="vo.price" :inline-desc="vo.mprice" class="goods_bk"></cell>
                             <cell title="数量" :value="vo.num" class="goods_bk"></cell>
-                            <cell title="合计" :value="vo.total" class="goods_total_bk"></cell>
+                            <cell title="合计" :value="vo.total_price" class="goods_total_bk"></cell>
                         </group>
                     </div>
                 </swipeout-item>
@@ -120,19 +120,25 @@
             Countup,
         },
         name: 'cart',
+        mounted() {
+            console.log('执行');
+            this.getCart();
+        },
         methods: {
             scan() {
                 console.log('SCAN');
                 this.searchData = "scan";
             },
             clear() {
-                console.log("CLEAR");
+                //console.log("CLEAR");
+                this.clearCart();
             },
             add() {
                 //**根据搜索内容进行 **带个参数
                 if (this.searchData != '') {
                     console.log('ADD:' + this.searchData);
-                    this.$router.push({ path: '/eCart/' + this.searchData });
+                    //this.$router.push({ path: '/eCart', query: { searchData: this.searchData, id: 0 } });
+                    this.$router.push({ name: '商品操作', params: { searchData: this.searchData, id: 0 } });
                 } else {
                     // this.$vux.alert.show({
                     //     title: '提示',
@@ -155,8 +161,9 @@
             },
             edit(index, id) {
                 //**根据点击id进行edit
-                var name = this.cartList[id].name;
-                console.log('EDIT:' + name);
+                var gid = this.cartList[id].gid;
+                console.log('EDIT:' + gid);
+                this.$router.push({ name: '商品操作', params: { searchData: 0, id: gid } });
             },
             del(index, id) {
                 console.log('DEL:' + id);
@@ -189,6 +196,42 @@
                 console.log(index + "=");
                 console.log(key);
             },
+            getCart() {
+                var param = this.$qs.stringify({
+                    start_time: this.dateSelect,
+                })
+                this.$http.post('http://mc.httpcenter.com/Vue/Sell/start', param)
+                    .then(res => {
+                        console.log(res);
+                        var total = res.data.total;
+                        var list = res.data.list;
+                        //列表
+                        this.cartList.splice(0, this.cartList.length);
+                        if (list) {
+                            this.cartList = list;
+                            //for (var i = 0; i < this.cartList.length; i++) {
+                            //    this.cartList[i].tp = 'tp' + this.cartList[i].type;
+                            //}
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            },
+            clearCart() {
+                this.$http.post('http://mc.httpcenter.com/Vue/Sell/remove')
+                    .then(res => {
+                        //console.log(res);
+                        //列表
+                        if (res.data.status == 1) {
+                            console.log(res.data.info);
+                            this.cartList.splice(0, this.cartList.length);
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            },
         },
         computed: {
             dCartList() {
@@ -202,16 +245,16 @@
                 this.totalmoney = 0;
                 this.totalnum = 0;
                 for (var i = 0; i < this.cartList.length; i++) {
-                    this.totalmoney += parseFloat(this.cartList[i].total);
+                    this.totalmoney += parseFloat(this.cartList[i].total_price);
                     this.totalnum += parseFloat(this.cartList[i].num);
                     var id = i + 1;
                     var tmp = {};
                     tmp.id = i;
                     tmp.name = id + '.' + this.cartList[i].name;
                     tmp.num = this.cartList[i].num;
-                    tmp.total = '￥' + this.cartList[i].total;
+                    tmp.total_price = '￥' + this.cartList[i].total_price;
                     tmp.price = '￥' + this.cartList[i].price;
-                    tmp.mprice = '原价 ￥' + this.cartList[i].mprice + '  折扣：' + this.cartList[i].zhekou;
+                    tmp.mprice = '原价 ￥' + this.cartList[i].mprice;//+ '  折扣：' + this.cartList[i].zhekou;
                     temp.push(tmp);
                 }
                 if (this.moling) {
@@ -235,21 +278,21 @@
                     mprice: '15.00',
                     num: 1,
                     zhekou: 10,
-                    total: '10.00',
+                    total_price: '10.00',
                 }, {
                     name: '商品3号',
                     price: '1.00',
                     mprice: '2.00',
                     num: 1,
                     zhekou: 10,
-                    total: '1.00',
+                    total_price: '1.00',
                 }, {
                     name: '商品2号',
                     price: '8.50',
                     mprice: '10.00',
                     num: 1,
                     zhekou: 10,
-                    total: '8.50',
+                    total_price: '8.50',
                 }],
                 showContent004: false,
             }

@@ -13,21 +13,30 @@
         <card :header="{title:'我的销售'}">
             <div slot="content" class="box-flex box-content">
                 <div class="vux-1px-l vux-1px-r">
-                    <div class="span">0</div>
+                    <div class="span">
+                        <countup :end-val="info.order_num_ok" :duration="2" :decimals="0" class="demo1"></countup>
+                    </div>
                     <div class="income">订单数量</div>
                 </div>
                 <div>
-                    <div class="span">￥0.00</div>
+                    <div class="span">
+                        ￥
+                        <countup :end-val="info.total_fee" :duration="2" :decimals="2" class="demo1"></countup>
+                    </div>
                     <div class="income">总收入</div>
                 </div>
             </div>
             <div slot="content" class="box-flex box-content top-hr">
                 <div class="vux-1px-l vux-1px-r">
-                    <div class="span">0</div>
+                    <div class="span">
+                        <countup :end-val="info.sell_num" :duration="2" :decimals="0" class="demo1"></countup>
+                    </div>
                     <div class="income">销售数量</div>
                 </div>
                 <div>
-                    <div class="span">0</div>
+                    <div class="span">
+                        <countup :end-val="info.ref_num" :duration="2" :decimals="0" class="demo1"></countup>
+                    </div>
                     <div class="income">退货数量</div>
                 </div>
             </div>
@@ -35,21 +44,33 @@
         <card :header="{title:'我的收入'}">
             <div slot="content" class="box-flex box-content">
                 <div class="vux-1px-l vux-1px-r">
-                    <div class="span">￥0.00</div>
+                    <div class="span">
+                        ￥
+                        <countup :end-val="info.card_money" :duration="2" :decimals="2" class="demo1"></countup>
+                    </div>
                     <div class="income pos">POS机</div>
                 </div>
                 <div>
-                    <div class="span">￥0.00</div>
+                    <div class="span">
+                        ￥
+                        <countup :end-val="info.now_money" :duration="2" :decimals="2" class="demo1"></countup>
+                    </div>
                     <div class="income cash">现金收入</div>
                 </div>
             </div>
             <div slot="content" class="box-flex box-content top-hr">
                 <div class="vux-1px-l vux-1px-r">
-                    <div class="span">￥0.00</div>
+                    <div class="span">
+                        ￥
+                        <countup :end-val="info.alipay_money" :duration="2" :decimals="2" class="demo1"></countup>
+                    </div>
                     <div class="income alipay">支付宝码</div>
                 </div>
                 <div>
-                    <div class="span">￥0.00</div>
+                    <div class="span">
+                        ￥
+                        <countup :end-val="info.wx_money" :duration="2" :decimals="2" class="demo1"></countup>
+                    </div>
                     <div class="income wxpay">微信扫码</div>
                 </div>
             </div>
@@ -67,11 +88,11 @@
 
 <script>
     import {
-        Calendar, Group, Cell, Card, Divider, Tab, TabItem
+        Calendar, Group, Cell, Card, Divider, Tab, TabItem, Countup
     } from 'vux'
     export default {
         components: {
-            Calendar, Group, Cell, Card, Divider, Tab, TabItem,
+            Calendar, Group, Cell, Card, Divider, Tab, TabItem, Countup,
         },
         name: 'home',
         methods: {
@@ -85,15 +106,37 @@
             },
             dateChange() {
                 console.log('改变日期：' + this.dateSelect);
+                this.getInfo();
+            },
+            getInfo() {
+                var param = this.$qs.stringify({
+                    start_time: this.dateSelect,
+                })
+                this.$http.post('http://mc.httpcenter.com/Vue/Sell/index', param)
+                    .then(res => {
+                        //console.log(res);
+                        var info = res.data.info;
+                        //总额
+                        if (info) {
+                            this.info = info;
+                        } else {
+                            this.info = this.info_bak;
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
             }
         },
         data() {
             return {
+                info_bak: { 'order_num_ok': 0, 'sell_num': 0, 'ref_num': 0, 'card_money': 0, 'alipay_money': 0, 'wx_money': 0, 'now_money': 0, 'total_fee': 0, },
+                info: { 'order_num_ok': 0, 'sell_num': 0, 'ref_num': 0, 'card_money': 0, 'alipay_money': 0, 'wx_money': 0, 'now_money': 0, 'total_fee': 0, },
                 canChangeDate: true,   //可以改变日期，属于权限系统
                 dateShow: false,        //切换后的日期选择框
                 dateSelect: 'TODAY',    //默认是当前日期
                 //
-                version: '0.5.77',
+                version: '0.5.86',
             }
         }
     }
