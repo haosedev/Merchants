@@ -33,7 +33,7 @@
                 </div>
             </div>
         </card>
-        <card v-for="(vo, index) in orderList" :key="vo.id" :header="{title: vo.times }" :footer="{title:'订单详情', link:'/Order/'+vo.sn }">
+        <card v-for="(vo, index) in orderList" :key="vo.id" :header="{title: vo.times }" :footer="{title:'订单详情', link:{path:'/Order/'+vo.id} }">
             <p slot="content" class="card-info">
                 <span>单号：{{vo.sn}}</span>
                 <br>
@@ -117,6 +117,7 @@
             }
         }
     }
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

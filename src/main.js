@@ -16,10 +16,10 @@ sync(store, router)
 Vue.config.productionTip = false
 
 //Vux Alert插件和Toast插件
-import { AlertPlugin, ToastPlugin } from 'vux'
+import { AlertPlugin, ToastPlugin, ConfirmPlugin } from 'vux'
 Vue.use(AlertPlugin)
 Vue.use(ToastPlugin)
-
+Vue.use(ConfirmPlugin)
 /* eslint-disable no-new */
 new Vue({
     store,
@@ -28,6 +28,6 @@ new Vue({
 }).$mount('#app')
 
 //跨域使用同样的session
-axios.defaults.withCredentials=true;
+axios.defaults.withCredentials = true;
 Vue.prototype.$http = axios
 Vue.prototype.$qs = qs

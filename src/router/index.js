@@ -36,7 +36,7 @@ const router = new Router({
         name: '订单列表',
         component: Lists
     }, {
-        path: '/Order/:sn',
+        path: '/Order/:id',
         name: '订单详情',
         component: Order
     }, { //** 404页面 */

@@ -27,15 +27,15 @@
         </div>
         <div class="hasCarts" v-show="hasGoods">
             <swipeout>
-                <swipeout-item transition-mode="follow" v-for="(vo, index) in dCartList" :key="vo.id">
+                <swipeout-item transition-mode="follow" v-for="(vo, index) in dCartList" :key="vo.xid">
                     <div slot="right-menu">
-                        <swipeout-button @click.native="edit(index, vo.id)" type="primary">编辑</swipeout-button>
-                        <swipeout-button @click.native="del(index, vo.id)" type="warn">删除</swipeout-button>
+                        <swipeout-button @click.native="edit(index, vo.xid)" type="primary">编辑</swipeout-button>
+                        <swipeout-button @click.native="del(index, vo.xid)" type="warn">删除</swipeout-button>
                     </div>
                     <div slot="content" class="demo-content vux-1px-t">
                         <group>
                             <cell :title="vo.name" class="goods_name_bk"></cell>
-                            <cell title="单价" :value="vo.price" :inline-desc="vo.mprice" class="goods_bk"></cell>
+                            <cell title="单价" :value="vo.price" class="goods_bk"><span slot="inline-desc" v-html="vo.price_text">{{vo.mprice_text}}</span></cell>
                             <cell title="数量" :value="vo.num" class="goods_bk"></cell>
                             <cell title="合计" :value="vo.total_price" class="goods_total_bk"></cell>
                         </group>
@@ -121,7 +121,7 @@
         },
         name: 'cart',
         mounted() {
-            console.log('执行');
+            //console.log('执行');
             this.getCart();
         },
         methods: {
@@ -131,14 +131,31 @@
             },
             clear() {
                 //console.log("CLEAR");
-                this.clearCart();
+                var self = this;
+                this.$vux.confirm.show({
+                    title: '警告',
+                    content: '确定要清空购物车吗？',
+                    onShow() {
+                        console.log('plugin show')
+                    },
+                    onHide() {
+                        console.log('plugin hide')
+                    },
+                    onCancel() {
+                        console.log('plugin cancel')
+                    },
+                    onConfirm() {
+                        console.log('plugin confirm')
+                        self.clearCart();
+                    }
+                })
             },
             add() {
                 //**根据搜索内容进行 **带个参数
                 if (this.searchData != '') {
-                    console.log('ADD:' + this.searchData);
-                    //this.$router.push({ path: '/eCart', query: { searchData: this.searchData, id: 0 } });
-                    this.$router.push({ name: '商品操作', params: { searchData: this.searchData, id: 0 } });
+                    //console.log('ADD:' + this.searchData);
+                    this.$router.push({ path: '/eCart', query: { searchData: this.searchData, id: 0 } });
+                    //this.$router.push({ name: '商品操作', params: { searchData: this.searchData, id: 0 } });
                 } else {
                     // this.$vux.alert.show({
                     //     title: '提示',
@@ -162,8 +179,8 @@
             edit(index, id) {
                 //**根据点击id进行edit
                 var gid = this.cartList[id].gid;
-                console.log('EDIT:' + gid);
-                this.$router.push({ name: '商品操作', params: { searchData: 0, id: gid } });
+                this.$router.push({ path: '/eCart', query: { searchData: 0, id: gid } });
+                //this.$router.push({ name: '商品操作', params: { searchData: this.searchData, id: gid } });
             },
             del(index, id) {
                 console.log('DEL:' + id);
@@ -173,7 +190,7 @@
                 this.$refs.search.setFocus()
             },
             resultClick(item) {
-                window.alert('you click the result item: ' + JSON.stringify(item))
+                //window.alert('you click the result item: ' + JSON.stringify(item))
             },
             getResult(val) {
                 this.results = val ? getResult(this.value) : []
@@ -202,16 +219,17 @@
                 })
                 this.$http.post('http://mc.httpcenter.com/Vue/Sell/start', param)
                     .then(res => {
-                        console.log(res);
+                        //console.log(res);
                         var total = res.data.total;
                         var list = res.data.list;
                         //列表
                         this.cartList.splice(0, this.cartList.length);
                         if (list) {
                             this.cartList = list;
-                            //for (var i = 0; i < this.cartList.length; i++) {
-                            //    this.cartList[i].tp = 'tp' + this.cartList[i].type;
-                            //}
+                            for (var i = 0; i < this.cartList.length; i++) {
+                                var zhekou = this.cartList[i].price / this.cartList[i].mprice * 10;
+                                this.cartList[i].zhekou = zhekou.toFixed(1);
+                            }
                         }
                     })
                     .catch(error => {
@@ -242,19 +260,20 @@
                     this.hasGoods = false;
                 }
                 var temp = [];
+                var tmp = {};
                 this.totalmoney = 0;
                 this.totalnum = 0;
                 for (var i = 0; i < this.cartList.length; i++) {
                     this.totalmoney += parseFloat(this.cartList[i].total_price);
                     this.totalnum += parseFloat(this.cartList[i].num);
-                    var id = i + 1;
+                    var xid = i + 1;
                     var tmp = {};
-                    tmp.id = i;
-                    tmp.name = id + '.' + this.cartList[i].name;
+                    tmp.xid = i;
+                    tmp.name = xid + '.' + this.cartList[i].name;
                     tmp.num = this.cartList[i].num;
                     tmp.total_price = '￥' + this.cartList[i].total_price;
                     tmp.price = '￥' + this.cartList[i].price;
-                    tmp.mprice = '原价 ￥' + this.cartList[i].mprice;//+ '  折扣：' + this.cartList[i].zhekou;
+                    tmp.price_text = '原价 <s>￥' + this.cartList[i].mprice + '</s>  折扣：' + this.cartList[i].zhekou;
                     temp.push(tmp);
                 }
                 if (this.moling) {
@@ -273,27 +292,13 @@
                 totalmoney: 0,
                 nc_totalmoney: 0,
                 cartList: [{
-                    name: '商品1号',
-                    price: '10.00',
-                    mprice: '15.00',
+                    name: '无商品',
+                    price: 10.00,
+                    mprice: 15.00,
                     num: 1,
                     zhekou: 10,
-                    total_price: '10.00',
-                }, {
-                    name: '商品3号',
-                    price: '1.00',
-                    mprice: '2.00',
-                    num: 1,
-                    zhekou: 10,
-                    total_price: '1.00',
-                }, {
-                    name: '商品2号',
-                    price: '8.50',
-                    mprice: '10.00',
-                    num: 1,
-                    zhekou: 10,
-                    total_price: '8.50',
-                }],
+                    total_price: 10.00,
+                }, ],
                 showContent004: false,
             }
         }

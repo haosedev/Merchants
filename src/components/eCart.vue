@@ -8,7 +8,7 @@
                 <div slot="value">￥{{info.mprice}}</div>
             </Cell>
             <x-number title="数量" v-model="info.num" :min='1' @on-change="num_change"></x-number>
-            <x-number title="折扣" v-model="zhekou" :min='1' :max='10' :step='0.1' @on-change="zhekou_change" class="zhekou_bk"></x-number>
+            <x-number title="折扣" v-model="zhekou" :min='1' width='80px' :max='10' :step='0.1' @on-change="zhekou_change" class="zhekou_bk"></x-number>
             <Cell title="总计" class="goods_total_bk">
                 <div slot="value">
                     <span style="color: red;font-weight:bold;">￥<countup :end-val="info.total_price" :duration="2" :decimals="2" class="demo1"></countup></span>
@@ -16,8 +16,8 @@
             </Cell>
         </Group>
         <box gap="10px 10px">
-            <x-button type="primary" @click.native="setGoods()">加入购物车</x-button>
-            <x-button type="warn" link="BACK">放弃修改</x-button>
+            <x-button type="primary" @click.native="setGoods()">放入购物车</x-button>
+            <x-button type="warn" link="BACK">放弃并返回</x-button>
         </box>
     </div>
 </template>
@@ -42,8 +42,10 @@
         },
         name: 'ecart',
         mounted() {
-            var id = this.$route.params.id;
-            var pn = this.$route.params.searchData;
+            //var id = this.$route.params.id;
+            var id = this.$route.query.id;
+            //var pn = this.$route.params.searchData;
+            var pn = this.$route.query.searchData;
             if (id > 0) {
                 console.log('i have id' + id);
                 this.option = 'edit';
@@ -74,6 +76,7 @@
                         info.num = 1;
                     //根据原价直接算出折扣
                     this.zhekou = info.price / info.mprice * 10;
+                    this.zhekou = this.zhekou.toFixed(1);
                     //console.log('折扣：' + zhekou);
                     info.total_price = info.price * info.num;
                     this.info = info;
