@@ -136,7 +136,7 @@
                 dateShow: false,        //切换后的日期选择框
                 dateSelect: 'TODAY',    //默认是当前日期
                 //
-                version: '0.6.88',
+                version: '0.7.89',
             }
         }
     }

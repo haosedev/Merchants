@@ -33,7 +33,8 @@
                 </div>
             </div>
         </card>
-        <card v-for="(vo, index) in orderList" :key="vo.id" :header="{title: vo.times }" :footer="{title:'订单详情', link:{path:'/Order/'+vo.id} }">
+        <card v-for="(vo, index) in orderList" :key="vo.id" :footer="{title:'订单详情', link:{path:'/Order/'+vo.id} }" >
+            <div slot="header" class="weui-panel__hd" :class="vo.sta">{{vo.times}}</div>
             <p slot="content" class="card-info">
                 <span>单号：{{vo.sn}}</span>
                 <br>
@@ -85,6 +86,7 @@
                             this.orderList = list;
                             for (var i = 0; i < this.orderList.length; i++) {
                                 this.orderList[i].tp = 'tp' + this.orderList[i].type;
+                                this.orderList[i].sta = 'sta' + this.orderList[i].status;
                             }
                         }
                     })
@@ -101,17 +103,17 @@
                 orderList: [{
                     sn: '100000011111',
                     type_c: '现金',
-                    total_fee: '10.00',
+                    total_fee: '0.00',
                     times: '2017-6-21 16:55:20',
                 }, {
                     sn: '1000000111222',
                     type_c: 'POS机',
-                    total_fee: '10.00',
+                    total_fee: '0.00',
                     times: '2017-6-21 16:55:20',
                 }, {
                     sn: '100000011333',
                     type_c: '支付宝',
-                    total_fee: '10.00',
+                    total_fee: '0.00',
                     times: '2017-6-21 16:55:20',
                 }],
             }
@@ -153,6 +155,14 @@
     .box-flex .span {
         padding-top: 5px;
         color: #f74c31;
+    }
+
+    .sta0 {
+        background-color: #FFEADD;
+    }
+
+    .sta1 {
+        background-color: #EBFBE1;
     }
 
     .income {

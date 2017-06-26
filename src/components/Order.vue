@@ -1,37 +1,37 @@
 <template>
     <div>
-        <group :title="订单详情">
-            <cell title="状态" class="totalBk">
+        <group title="订单详情">
+            <cell title="订单状态" :class="info.bk" is-link @click.native="closebtn()">
                 <div slot="value">
-                    <span>{{info.status_c}}</span>
+                    <span>{{info.status_c}}&nbsp;</span>
                 </div>
             </cell>
-            <cell title="订单号" class="totalBk">
+            <cell title="订单号" :class="info.bk">
                 <div slot="value">
                     <span>{{info.sn}}</span>
                 </div>
             </cell>
-            <cell title="总数量" class="totalBk">
+            <cell title="总数量" :class="info.bk">
                 <div slot="value">
                     <span>x {{info.num}}</span>
                 </div>
             </cell>
-            <cell title="付款方式" class="totalBk">
+            <cell title="付款方式" :class="info.bk">
                 <div slot="value">
                     <span>{{info.type_c}}</span>
                 </div>
             </cell>
-            <cell title="总金额" class="totalBk">
+            <cell title="总金额" :class="info.bk">
                 <div slot="value">
                     <span style="color: red;font-weight:bold;">￥{{info.total_fee}}</span>
                 </div>
             </cell>
-            <cell title="下单时间" class="totalBk">
+            <cell title="下单时间" :class="info.bk">
                 <div slot="value">
                     <span>{{info.ctime}}</span>
                 </div>
             </cell>
-            <cell title="修改时间" class="totalBk">
+            <cell title="修改时间" :class="info.bk">
                 <div slot="value">
                     <span>{{info.utime}}</span>
                 </div>
@@ -58,16 +58,52 @@
         },
         name: 'home',
         mounted() {
-            this.getList(this.$route.params.id);
+            this.order_id = this.$route.params.id;
+            this.getList(this.order_id);
         },
         methods: {
+            closebtn() {
+                //关闭订单(作废订单)
+                var self = this;
+                this.$vux.confirm.show({
+                    title: '警告',
+                    content: '确定作废该订单吗？',
+                    onShow() {
+                        console.log('plugin show')
+                    },
+                    onHide() {
+                        console.log('plugin hide')
+                    },
+                    onCancel() {
+                        console.log('plugin cancel')
+                    },
+                    onConfirm() {
+                        console.log('plugin confirm')
+                        self.closeOrder(self.order_id);
+                    }
+                })
+            },
+            closeOrder(xid) {
+                this.$http.get('http://mc.httpcenter.com/Vue/Sell/order_del/id/' + xid)
+                    .then(res => {
+                        //console.log(res);
+                        //列表
+                        if (res.data.status == 1) {
+                            console.log(res.data.info);
+                            this.getList(xid);
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            },
             getList(xid) {
                 var param = this.$qs.stringify({
                     id: xid,
                 })
                 this.$http.post('http://mc.httpcenter.com/Vue/Sell/info', param)
                     .then(res => {
-                        console.log(res);
+                        //console.log(res);
                         var status = res.data.status;
                         this.msg = res.data.msg;
                         this.qrurl = res.data.qrurl;
@@ -85,6 +121,7 @@
                                 info.status_c = '正常';
                             else
                                 info.status_c = '作废';
+                            info.bk = "totalBk" + info.status;
                             this.info = info;
                         } else {
                             this.info = this.info_bak;
@@ -109,11 +146,6 @@
         computed: {
             dCartList() {
                 //**既然无法再列表中直接植入，只能处理数组了
-                // if (this.cartList.length > 0) {
-                //     this.hasGoods = true;
-                // } else {
-                //     this.hasGoods = false;
-                // }
                 var temp = [];
                 var tmp = {};
                 for (var i = 0; i < this.orderGoods.length; i++) {
@@ -126,6 +158,7 @@
         },
         data() {
             return {
+                order_id: 0,
                 qrurl: '',
                 msg: '',
                 info_bak: { "id": "0", "sn": "000000", "total_fee": "000.00", "type": "0", "create_time": "0", "update_time": "0", "status": "0" },
@@ -133,10 +166,10 @@
                 orderGoods: [{
                     name: '无商品',
                     price: 0.00,
-                    mprice: 5.00,
+                    mprice: 0.00,
                     num: 1,
                     zhekou: 10,
-                    total: 10.00,
+                    total: 0.00,
                 },],
             }
         }
@@ -163,8 +196,12 @@
         padding: 20px;
     }
 
-    .totalBk {
+    .totalBk0 {
         background-color: #FFEADD;
+    }
+
+    .totalBk1 {
+        background-color: #DEFFCA;
     }
 
     .goods_name_bk {

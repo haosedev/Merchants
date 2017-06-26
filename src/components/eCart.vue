@@ -8,7 +8,7 @@
                 <div slot="value">￥{{info.mprice}}</div>
             </Cell>
             <x-number title="数量" v-model="info.num" :min='1' @on-change="num_change"></x-number>
-            <x-number title="折扣" v-model="zhekou" :min='1' width='80px' :max='10' :step='0.1' @on-change="zhekou_change" class="zhekou_bk"></x-number>
+            <x-number title="折扣" v-model="zhekou" :min='1' :max='10' width='80px' :step='0.1' @on-change="zhekou_change" class="zhekou_bk"></x-number>
             <Cell title="总计" class="goods_total_bk">
                 <div slot="value">
                     <span style="color: red;font-weight:bold;">￥<countup :end-val="info.total_price" :duration="2" :decimals="2" class="demo1"></countup></span>
@@ -47,7 +47,7 @@
             //var pn = this.$route.params.searchData;
             var pn = this.$route.query.searchData;
             if (id > 0) {
-                console.log('i have id' + id);
+                //console.log('i have id' + id);
                 this.option = 'edit';
                 this.getGoodsId(id);
             } else {
@@ -70,13 +70,14 @@
                     info.mprice.toFixed(2);
                     info.price = parseFloat(info.price);
                     info.price.toFixed(2);
-                    if (info.num)
+                    if (info.num > 0)
                         info.num = parseInt(info.num);
                     else
                         info.num = 1;
                     //根据原价直接算出折扣
                     this.zhekou = info.price / info.mprice * 10;
                     this.zhekou = this.zhekou.toFixed(1);
+                    this.zhekou = parseFloat(this.zhekou);  //转成真实的数值，也许toFixed
                     //console.log('折扣：' + zhekou);
                     info.total_price = info.price * info.num;
                     this.info = info;
@@ -86,12 +87,27 @@
             },
             getGoodsPn(pn) {
                 //进入时，用get获取，为了兼容老版本
+                var self = this;
                 this.$http.get('http://mc.httpcenter.com/Vue/Sell/add/name/' + pn)
                     .then(res => {
                         console.log(res);
                         var info = res.data.info;
                         //列表
                         this.set_info(info);
+                        if (res.data.status == 0) {
+                            this.$vux.alert.show({
+                                title: '提示',
+                                content: res.data.msg,
+                                onShow() {
+                                    console.log('Plugin: I\'m showing')
+                                },
+                                onHide() {
+                                    console.log('Plugin: I\'m hiding now')
+                                    //跳转到订单页面，带着订单id;
+                                    self.$router.back();
+                                }
+                            })
+                        }
                     })
                     .catch(error => {
                         console.log(error);
@@ -101,7 +117,7 @@
                 //进入时，用get获取，为了兼容老版本
                 this.$http.get('http://mc.httpcenter.com/Vue/Sell/edit/id/' + id)
                     .then(res => {
-                        console.log(res);
+                        //console.log(res);
                         var info = res.data.info;
                         //列表
                         this.set_info(info);
@@ -143,8 +159,8 @@
         },
         data() {
             return {
-                info_bak: { name: '无商品', pn: '0', bc: '0', price: 0.0, num: 0, mprice: 0.0, total_price: 0 },
-                info: { name: 'xxx', pn: '01', bc: '1234', price: 17.0, num: 1, mprice: 17.0, total_price: 0 },
+                info_bak: { name: '无商品', pn: '00', bc: '0000', price: 0.0, num: 0, mprice: 0.0, total_price: 0 },
+                info: { name: 'xxx', pn: '00', bc: '0000', price: 0.0, num: 1, mprice: 0.0, total_price: 0 },
                 zhekou: 10,
                 option: 'add',
             }

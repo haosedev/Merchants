@@ -61,22 +61,22 @@
             <div class="btn-group">
                 <flexbox>
                     <flexbox-item>
-                        <div class="btn">
+                        <div class="btn" @click="orderBtn(0)">
                             <div class="lab">现金</div>
                         </div>
                     </flexbox-item>
                     <flexbox-item>
-                        <div class="btn">
+                        <div class="btn" @click="orderBtn(1)">
                             <div class="lab">刷卡</div>
                         </div>
                     </flexbox-item>
                     <flexbox-item>
-                        <div class="btn">
+                        <div class="btn" @click="orderBtn(2)">
                             <div class="lab">支付宝</div>
                         </div>
                     </flexbox-item>
                     <flexbox-item>
-                        <div class="btn">
+                        <div class="btn" @click="orderBtn(3)">
                             <div class="lab">微信</div>
                         </div>
                     </flexbox-item>
@@ -157,16 +157,6 @@
                     this.$router.push({ path: '/eCart', query: { searchData: this.searchData, id: 0 } });
                     //this.$router.push({ name: '商品操作', params: { searchData: this.searchData, id: 0 } });
                 } else {
-                    // this.$vux.alert.show({
-                    //     title: '提示',
-                    //     content: '添加商品时，需要在搜索框内输入【条码】或【货号】',
-                    //     onShow() {
-                    //         console.log('Plugin: I\'m showing')
-                    //     },
-                    //     onHide() {
-                    //         console.log('Plugin: I\'m hiding now')
-                    //     }
-                    // })
                     this.$vux.toast.show({
                         type: 'text',
                         position: 'middle',
@@ -183,8 +173,37 @@
                 //this.$router.push({ name: '商品操作', params: { searchData: this.searchData, id: gid } });
             },
             del(index, id) {
-                console.log('DEL:' + id);
-                this.cartList.splice(index, 1);
+                //console.log('DEL:' + id);
+                var name = this.cartList[id].name;
+                var gid = this.cartList[id].gid;
+                var self = this;
+                this.$vux.confirm.show({
+                    title: '提示',
+                    content: '移除【' + name + '】商品吗？？',
+                    onShow() {
+                        console.log('plugin show')
+                    },
+                    onHide() {
+                        console.log('plugin hide')
+                    },
+                    onCancel() {
+                        console.log('plugin cancel')
+                    },
+                    onConfirm() {
+                        console.log('plugin confirm')
+                        self.delGoods(gid);
+                    }
+                })
+            },
+            delGoods(gid) {
+                this.$http.get('http://mc.httpcenter.com/Vue/Sell/del/id/' + gid)
+                    .then(res => {
+                        console.log(res);
+                        this.getCart();
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
             },
             setFocus() {
                 this.$refs.search.setFocus()
@@ -210,8 +229,8 @@
                 console.log('on cancel')
             },
             onButtonClick(type, index, key) {
-                console.log(index + "=");
-                console.log(key);
+                //console.log(index + "=");
+                //console.log(key);
             },
             getCart() {
                 var param = this.$qs.stringify({
@@ -236,13 +255,82 @@
                         console.log(error);
                     });
             },
+            orderBtn(tp) {
+                //**需要确认
+                var tpc = '现金';
+                if (tp == 1) tpc = '刷卡';
+                else if (tp == 2) tpc = '支付宝';
+                else if (tp == 3) tpc = '微信';
+                var self = this;
+                this.$vux.confirm.show({
+                    title: '提示',
+                    content: '确定要以【' + tpc + '】方式结算订单吗？？',
+                    onShow() {
+                        console.log('plugin show')
+                    },
+                    onHide() {
+                        console.log('plugin hide')
+                    },
+                    onCancel() {
+                        console.log('plugin cancel')
+                    },
+                    onConfirm() {
+                        console.log('plugin confirm')
+                        self.makeOrder(tp);
+                    }
+                })
+            },
+            makeOrder(tp) {
+                var mo = 0;
+                if (this.moling) mo = 1;
+                var param = this.$qs.stringify({
+                    type: tp, moling: mo,
+                })
+                var self = this;
+                this.$http.post('http://mc.httpcenter.com/Vue/Sell/order_do', param)
+                    .then(res => {
+                        var msg = 'OXOXOXOX';
+                        if (res.data.status == 1) {
+                            this.$vux.alert.show({
+                                title: '提示',
+                                content: '订单提交成功！',
+                                onShow() {
+                                    console.log('Plugin: I\'m showing')
+                                },
+                                onHide() {
+                                    console.log('Plugin: I\'m hiding now')
+                                    //跳转到订单页面，带着订单id;
+                                    self.$router.push({ path: '/Order/' + res.data.order_id });
+                                }
+                            })
+                        } else {
+                            this.$vux.alert.show({
+                                title: '提示',
+                                content: '订单提交失败！',
+                                onShow() {
+                                    console.log('Plugin: I\'m showing')
+                                },
+                                onHide() {
+                                    console.log("type返回:" + res.data.type);
+                                    console.log("抹零返回:" + res.data.moling);
+
+                                    console.log('Plugin: I\'m hiding now')
+                                    self.getCart();
+                                }
+                            })
+                        }
+                    })
+                    .catch(error => {
+                        console.log(error);
+                    });
+            },
             clearCart() {
                 this.$http.post('http://mc.httpcenter.com/Vue/Sell/remove')
                     .then(res => {
                         //console.log(res);
                         //列表
                         if (res.data.status == 1) {
-                            console.log(res.data.info);
+                            //console.log(res.data.info);
                             this.cartList.splice(0, this.cartList.length);
                         }
                     })
@@ -298,7 +386,7 @@
                     num: 1,
                     zhekou: 10,
                     total_price: 10.00,
-                }, ],
+                },],
                 showContent004: false,
             }
         }
