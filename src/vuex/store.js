@@ -6,7 +6,8 @@ Vue.use(Vuex)
 const state = {
     demoScrollTop: 0,
     isLoading: false,
-    direction: 'forward'
+    direction: 'forward',
+    cartnum: '',
 }
 
 const mutations = { //改变
@@ -18,6 +19,9 @@ const mutations = { //改变
     },
     updateDirection(state, payload) {
         state.direction = payload.direction
+    },
+    updateCartnum(state, payload) {
+        state.cartnum = payload.cartnum;
     }
 }
 
@@ -28,23 +32,23 @@ const getters = {
 }
 
 const actions = { //异步处理
-        updateDemoPosition({ commit }, top) {
-            commit({ type: 'updateDemoPosition', top: top })
-        }
+    updateDemoPosition({ commit }, top) {
+        commit({ type: 'updateDemoPosition', top: top })
     }
-    //**模块组，轻量级项目不推荐 */
-    // const moduleA = {
-    //     state,
-    //     mutations,
-    //     getters,
-    //     actions
-    // }
-    // const moduleB = {
-    //     state,
-    //     mutations,
-    //     getters,
-    //     actions
-    // }
+}
+//**模块组，轻量级项目不推荐 */
+// const moduleA = {
+//     state,
+//     mutations,
+//     getters,
+//     actions
+// }
+// const moduleB = {
+//     state,
+//     mutations,
+//     getters,
+//     actions
+// }
 export default new Vuex.Store({
     //modules: { a: moduleA, moduleB }
     state,

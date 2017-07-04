@@ -21,7 +21,7 @@ Vue.use(AlertPlugin)
 Vue.use(ToastPlugin)
 Vue.use(ConfirmPlugin)
 /* eslint-disable no-new */
-new Vue({
+var app = new Vue({
     store,
     router,
     render: h => h(App)

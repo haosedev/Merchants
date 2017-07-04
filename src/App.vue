@@ -20,7 +20,7 @@
                     <span class="icon-shouyeshouye icon" slot="icon" style="position:relative;top: -6px;left:-2px"></span>
                     <span class="black" slot="label">首页</span>
                 </tabbar-item>
-                <tabbar-item :link="{path:'/Cart'}" :selected="route.path === '/Cart'" :badge="cart_num">
+                <tabbar-item :link="{path:'/Cart'}" :selected="route.path === '/Cart'" :badge="cartNum">
                     <span class="icon-xiaoshou2 icon" slot="icon" style="position:relative;top: -4px;left:-2px"></span>
                     <span slot="label">
                         <span class="black">购物车</span>
@@ -133,7 +133,8 @@
                 deviceready: state => state.app.deviceready,
                 demoTop: state => state.demoScrollTop,
                 isLoading: state => state.isLoading,
-                direction: state => state.direction
+                direction: state => state.direction,
+                cart_num: state => state.cartnum
             }),
             isShowBar() {
                 if (/component/.test(this.path)) {
@@ -165,6 +166,9 @@
                     return this.route.name;
                 }
             },
+            cartNum(){
+                return this.cart_num;
+            },
             // isDemo() {
             //     return /h2/.test(this.route.path)
             // },
@@ -186,8 +190,7 @@
                     menu4: '仓储',
                     menu5: '系统设置',
                 },
-                cart_num: '',
-                version: '0.1.5',
+                //cart_num: '',
             }
         }
     }

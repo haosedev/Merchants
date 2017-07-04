@@ -1,6 +1,11 @@
 <template>
     <div>
         <group title="订单详情">
+            <cell title="打印" :class="info.bk" is-link @click.native="printbtn()">
+                <div slot="value">
+                    <span>打印小票&nbsp;</span>
+                </div>
+            </cell>
             <cell title="订单状态" :class="info.bk" is-link @click.native="closebtn()">
                 <div slot="value">
                     <span>{{info.status_c}}&nbsp;</span>
@@ -83,13 +88,32 @@
                     }
                 })
             },
+            printbtn(){
+                var self = this;
+                this.$vux.confirm.show({
+                    title: '提示',
+                    content: '确定要打印小票吗？',
+                    onShow() {
+                        console.log('plugin show')
+                    },
+                    onHide() {
+                        console.log('plugin hide')
+                    },
+                    onCancel() {
+                        console.log('plugin cancel')
+                    },
+                    onConfirm() {
+                        window.HaosedevFunction.SMPrint(self.msg,self.qrurl);
+                    }
+                })
+            },
             closeOrder(xid) {
                 this.$http.get('http://mc.httpcenter.com/Vue/Sell/order_del/id/' + xid)
                     .then(res => {
                         //console.log(res);
                         //列表
                         if (res.data.status == 1) {
-                            console.log(res.data.info);
+                            //console.log(res.data.info);
                             this.getList(xid);
                         }
                     })

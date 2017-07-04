@@ -92,6 +92,7 @@
 </template>
 
 <script>
+    import store from '@/vuex/store'
     import {
         LoadMore,
         Swipeout,
@@ -125,8 +126,12 @@
             this.getCart();
         },
         methods: {
+            qrout(test) {
+                alert("cart:" + test);
+            },
             scan() {
                 console.log('SCAN');
+                window.HaosedevFunction.QrScan("cardwinner");
                 this.searchData = "scan";
             },
             clear() {
@@ -243,12 +248,19 @@
                         var list = res.data.list;
                         //列表
                         this.cartList.splice(0, this.cartList.length);
+                        var num = 0;
                         if (list) {
                             this.cartList = list;
                             for (var i = 0; i < this.cartList.length; i++) {
+                                num++;
                                 var zhekou = this.cartList[i].price / this.cartList[i].mprice * 10;
                                 this.cartList[i].zhekou = zhekou.toFixed(1);
                             }
+                        }
+                        if (num > 0) {
+                            store.commit('updateCartnum', { cartnum: num.toString() });
+                        } else {
+                            store.commit('updateCartnum', { cartnum: "" });
                         }
                     })
                     .catch(error => {
@@ -300,6 +312,8 @@
                                 onHide() {
                                     console.log('Plugin: I\'m hiding now')
                                     //跳转到订单页面，带着订单id;
+                                    //下单成功也清除数字
+                                    store.commit('updateCartnum', { cartnum: "" });
                                     self.$router.push({ path: '/Order/' + res.data.order_id });
                                 }
                             })
@@ -332,6 +346,8 @@
                         if (res.data.status == 1) {
                             //console.log(res.data.info);
                             this.cartList.splice(0, this.cartList.length);
+                            //清空购物车数字
+                            store.commit('updateCartnum', { cartnum: "" });
                         }
                     })
                     .catch(error => {
