@@ -1,7 +1,7 @@
 <template>
     <div>
-        <search :results="results" v-model="searchData" :auto-fixed="false" top="46px" @on-focus="onFocus" @on-cancel="onCancel"
-            ref="search"></search>
+        <search :results="results" v-model="qrout" :auto-fixed="false" top="46px" @on-focus="onFocus" @on-change='searchChange'
+            @on-cancel="onCancel" ref="search"></search>
 
         <div style="padding:5px;">
             <flexbox>
@@ -124,15 +124,12 @@
         mounted() {
             //console.log('执行');
             this.getCart();
+            store.commit('updateQrtext', { qrtext: '' });
         },
         methods: {
-            qrout(test) {
-                alert("cart:" + test);
-            },
             scan() {
                 console.log('SCAN');
                 window.HaosedevFunction.QrScan("cardwinner");
-                this.searchData = "scan";
             },
             clear() {
                 //console.log("CLEAR");
@@ -210,14 +207,14 @@
                         console.log(error);
                     });
             },
+            searchChange(val) {
+                this.searchData = val;
+            },
             setFocus() {
                 this.$refs.search.setFocus()
             },
             resultClick(item) {
                 //window.alert('you click the result item: ' + JSON.stringify(item))
-            },
-            getResult(val) {
-                this.results = val ? getResult(this.value) : []
             },
             onSubmit() {
                 this.$refs.search.setBlur()
@@ -238,10 +235,11 @@
                 //console.log(key);
             },
             getCart() {
-                var param = this.$qs.stringify({
-                    start_time: this.dateSelect,
-                })
-                this.$http.post('http://mc.httpcenter.com/Vue/Sell/start', param)
+                // var param = this.$qs.stringify({
+                //     hahaha: 'aa',
+                // })
+                var param = {};
+                this.$http.post('http://mc.httpcenter.com/Vue/Sell/start')
                     .then(res => {
                         //console.log(res);
                         var total = res.data.total;
@@ -325,8 +323,8 @@
                                     console.log('Plugin: I\'m showing')
                                 },
                                 onHide() {
-                                    console.log("type返回:" + res.data.type);
-                                    console.log("抹零返回:" + res.data.moling);
+                                    //console.log("type返回:" + res.data.type);
+                                    //console.log("抹零返回:" + res.data.moling);
 
                                     console.log('Plugin: I\'m hiding now')
                                     self.getCart();
@@ -356,6 +354,10 @@
             },
         },
         computed: {
+            qrout() {
+                var aa = this.$store.state.qrtext;
+                return aa;
+            },
             dCartList() {
                 //**既然无法再列表中直接植入，只能处理数组了
                 if (this.cartList.length > 0) {
@@ -384,7 +386,8 @@
                     this.totalmoney = parseInt(this.totalmoney);
                 }
                 return temp;
-            }
+            },
+
         },
         data() {
             return {

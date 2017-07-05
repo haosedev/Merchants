@@ -115,11 +115,11 @@
                 })
                 this.$http.post('http://mc.httpcenter.com/Vue/Sell/index', param)
                     .then(res => {
-                        console.log(res);
+                        //console.log(res);
                         var info = res.data.info;
                         var num = parseInt(res.data.cart);
                         if (num > 0) {
-                            console.log('have cart num');
+                            //console.log('have cart num');
                             store.commit('updateCartnum', { cartnum: num.toString() });
                         }
                         //总额
@@ -142,7 +142,7 @@
                 dateShow: false,        //切换后的日期选择框
                 dateSelect: 'TODAY',    //默认是当前日期
                 //
-                version: '0.7.95',
+                version: '0.8.99',
             }
         }
     }

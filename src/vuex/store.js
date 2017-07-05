@@ -8,6 +8,7 @@ const state = {
     isLoading: false,
     direction: 'forward',
     cartnum: '',
+    qrtext: '',
 }
 
 const mutations = { //改变
@@ -22,6 +23,9 @@ const mutations = { //改变
     },
     updateCartnum(state, payload) {
         state.cartnum = payload.cartnum;
+    },
+    updateQrtext(state, payload) {
+        state.qrtext = payload.qrtext;
     }
 }
 
@@ -29,6 +33,11 @@ const getters = {
     //count: (state) => {
     //    return state.count += 100;
     //}
+    getqrtext: (state) => {
+        var text = state.qrtext;
+        state.qrtext = '';
+        return text;
+    }
 }
 
 const actions = { //异步处理

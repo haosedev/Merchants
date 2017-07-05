@@ -21,6 +21,7 @@ Vue.use(AlertPlugin)
 Vue.use(ToastPlugin)
 Vue.use(ConfirmPlugin)
 /* eslint-disable no-new */
+
 var app = new Vue({
     store,
     router,
@@ -31,3 +32,14 @@ var app = new Vue({
 axios.defaults.withCredentials = true;
 Vue.prototype.$http = axios
 Vue.prototype.$qs = qs
+
+
+window.qrout = (text) => {
+    store.commit('updateQrtext', { qrtext: text });
+}
+
+
+
+
+
+
