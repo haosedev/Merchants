@@ -129,7 +129,6 @@
             setGoods() {
                 //添加商品
                 //进入时，用get获取，为了兼容老版本
-                console.log('数量:' + this.info.num);
                 var param = this.$qs.stringify({
                     id: this.info.id,
                     num: this.info.num,

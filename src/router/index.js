@@ -9,6 +9,9 @@ import Cart from '@/components/Cart'
 import eCart from '@/components/eCart'
 import Lists from '@/components/Lists'
 import Order from '@/components/Order'
+import Login from '@/components/Login'
+import Store from '@/components/Store'
+import eStore from '@/components/eStore'
 
 Vue.use(Router)
 
@@ -29,7 +32,7 @@ const router = new Router({
         component: Cart
     }, {
         path: '/eCart',
-        name: '商品操作',
+        name: '购物车商品',
         component: eCart
     }, {
         path: '/Lists',
@@ -39,16 +42,27 @@ const router = new Router({
         path: '/Order/:id',
         name: '订单详情',
         component: Order
-    }, { //** 404页面 */
+    }, {
+        path: '/Login',
+        name: '登陆页',
+        component: Login
+    }, {
+        path: '/Store',
+        name: '库存管理',
+        component: Store
+    },{
+        path: '/eStore',
+        name: '商品管理',
+        component: eStore
+    },{ //** 404页面 */
         path: '*',
         component: Error,
     }]
 })
 
 //注册全局钩子，用于处理路径分级，判断路径变化到底是属于前进还是后退
-router.beforeEach(function(to, from, next) {
+router.beforeEach(function (to, from, next) {
     store.commit('updateLoadingStatus', { isLoading: true })
-
     const toIndex = history.getItem(to.path)
     const fromIndex = history.getItem(from.path)
 
@@ -73,7 +87,7 @@ router.beforeEach(function(to, from, next) {
     }
 })
 
-router.afterEach(function(to) {
+router.afterEach(function (to) {
     store.commit('updateLoadingStatus', { isLoading: false })
     if (process.env.NODE_ENV === 'production') {
         //这里可以记录页面跳转

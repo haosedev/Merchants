@@ -6,16 +6,17 @@
         <div v-transfer-dom>
             <actionsheet v-model="showMenu" :menus="menus" @on-click-menu="menuclick" show-cancel></actionsheet>
         </div>
-    
+
         <view-box ref="viewBox" body-padding-top="46px" body-padding-bottom="55px">
-    
-            <x-header slot="header" style="width:100%;position:absolute;left:0;top:0;z-index:100;" :left-options="leftOptions" :right-options="rightOptions" :title="title" :transition="headerTransition" @on-click-more="onClickMore"></x-header>
-    
+
+            <x-header slot="header" style="width:100%;position:absolute;left:0;top:0;z-index:100;" :left-options="leftOptions" :right-options="rightOptions"
+                :title="title" :transition="headerTransition" @on-click-more="onClickMore"></x-header>
+
             <transition :name="'vux-pop-' + (direction === 'forward' ? 'in' : 'out')">
                 <router-view class="router-view"></router-view>
             </transition>
-    
-            <tabbar class="app-tabbar" icon-class="vux-center" v-show="!isTabbarDemo" slot="bottom">
+
+            <tabbar class="app-tabbar" icon-class="vux-center" v-show="isTabbarShow" slot="bottom">
                 <tabbar-item :link="{path:'/'}" :selected="route.path === '/'">
                     <span class="icon-shouyeshouye icon" slot="icon" style="position:relative;top: -6px;left:-2px"></span>
                     <span class="black" slot="label">首页</span>
@@ -67,7 +68,16 @@
             Loading,
             Actionsheet
         },
+        created() {
+            this.checkLogin();
+        },
         methods: {
+            checkLogin() {
+                var isLogin = sessionStorage.isLogin;
+                if (!isLogin) {
+                    this.$router.push('/Login');
+                }
+            },
             onClickMore() {
                 this.showMenu = true
             },
@@ -83,10 +93,10 @@
                         this.$router.push('/Lists');
                         break;
                     case 'menu4':
-                        console.log('4 unset');
+                        this.$router.push('/Store');
                         break;
                     case 'menu5':
-                        console.log('5 unset');
+                        window.HaosedevFunction.goSetting("cardwinner");
                         break;
                     default:
                         console.log('default menu');
@@ -108,6 +118,7 @@
             this.box.removeEventListener('scroll', this.handler, false)
         },
         watch: {
+            "$route": 'checkLogin',
             // path(path) {
             //     if (path === '/') {
             //         this.$router.replace('/')
@@ -143,14 +154,28 @@
                 return false
             },
             leftOptions() {
+                var res = true;
+                if ((this.route.path == '/') || (this.route.path == '/Login'))
+                    res = false;
                 return {
-                    showBack: this.route.path !== '/'
+                    //**需要 不是 / 和 /Login
+                    showBack: res,
                 }
             },
             rightOptions() {
+                var res = false;
+                if (this.route.path == '/')
+                    res = true;
                 return {
-                    showMore: true
+                    showMore: res,
                 }
+            },
+            isTabbarShow() {
+                var res = true;
+                if (this.route.path == '/Login') {
+                    res = false;
+                }
+                return res;
             },
             headerTransition() {
                 return this.direction === 'forward' ? 'vux-header-fade-in-right' : 'vux-header-fade-in-left'
@@ -166,7 +191,7 @@
                     return this.route.name;
                 }
             },
-            cartNum(){
+            cartNum() {
                 return this.cart_num;
             },
             // isDemo() {
@@ -190,10 +215,10 @@
                     menu4: '仓储',
                     menu5: '系统设置',
                 },
-                //cart_num: '',
             }
         }
     }
+
 </script>
 
 <style lang="less">
@@ -207,35 +232,39 @@
         overflow-x: hidden;
         background-color: #fbf9fe;
     }
-    
+
     .icon {
         font-family: "iconfont" !important;
         font-size: 30px;
         color: #888;
     }
-    
+
+    .ph10 {
+        height: 10px;
+    }
+
     .black {
         color: #000;
     }
-    
+
     .weui-tabbar.app-tabber {
         /** backdrop-filter: blur(10px);
   background-color: none;
   background: rgba(247, 247, 250, 0.5);**/
     }
-    
+
     .weui-bar__item_on .icon {
         color: #0275d8;
     }
-    
+
     .weui-tabbar_item.weui-bar__item_on .app-tabbar-icon-home {
         color: rgb(53, 73, 94);
     }
-    
+
     .icon:before {
         content: attr(icon);
     }
-    
+
     .app-tabbar-component {
         background-color: #F70968;
         color: #fff;
@@ -243,11 +272,11 @@
         padding: 0 4px;
         line-height: 14px;
     }
-    
+
     .weui-tabbar__icon+.weui-tabbar__label {
         margin-top: 0!important;
     }
-    
+
     .vux-demo-header-box {
         z-index: 100;
         position: absolute;
@@ -255,26 +284,26 @@
         left: 0;
         top: 0;
     }
-    
+
     .demo-icon {
         font-family: 'vux-demo';
         font-size: 20px;
         color: #04BE02;
     }
-    
+
     .demo-icon-big {
         font-size: 28px;
     }
-    
+
     .demo-icon:before {
         content: attr(icon);
     }
-    
+
     .router-view {
         width: 100%;
         top: 46px;
     }
-    
+
     .vux-pop-out-enter-active,
     .vux-pop-out-leave-active,
     .vux-pop-in-enter-active,
@@ -287,27 +316,27 @@
         backface-visibility: hidden;
         perspective: 1000;
     }
-    
+
     .vux-pop-out-enter {
         opacity: 0;
         transform: translate3d(-100%, 0, 0);
     }
-    
+
     .vux-pop-out-leave-active {
         opacity: 0;
         transform: translate3d(100%, 0, 0);
     }
-    
+
     .vux-pop-in-enter {
         opacity: 0;
         transform: translate3d(100%, 0, 0);
     }
-    
+
     .vux-pop-in-leave-active {
         opacity: 0;
         transform: translate3d(-100%, 0, 0);
     }
-    
+
     .menu-title {
         color: #888;
     }

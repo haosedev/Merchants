@@ -160,9 +160,9 @@
                     //this.$router.push({ name: '商品操作', params: { searchData: this.searchData, id: 0 } });
                 } else {
                     this.$vux.toast.show({
-                        type: 'text',
+                        type: 'warn',
                         position: 'middle',
-                        width: '260px',
+                        width: '240px',
                         time: 3000,
                         text: '添加商品时，需要在搜索框内输入【条码】或【货号】'
                     })
@@ -299,7 +299,6 @@
                 var self = this;
                 this.$http.post('http://mc.httpcenter.com/Vue/Sell/order_do', param)
                     .then(res => {
-                        var msg = 'OXOXOXOX';
                         if (res.data.status == 1) {
                             this.$vux.alert.show({
                                 title: '提示',
@@ -359,7 +358,7 @@
                 return aa;
             },
             dCartList() {
-                //**既然无法再列表中直接植入，只能处理数组了
+                //处理数组
                 if (this.cartList.length > 0) {
                     this.hasGoods = true;
                 } else {

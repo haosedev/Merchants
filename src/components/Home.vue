@@ -106,7 +106,7 @@
                 }
             },
             dateChange() {
-                console.log('改变日期：' + this.dateSelect);
+                //console.log('改变日期：' + this.dateSelect);
                 this.getInfo();
             },
             getInfo() {
@@ -142,7 +142,7 @@
                 dateShow: false,        //切换后的日期选择框
                 dateSelect: 'TODAY',    //默认是当前日期
                 //
-                version: '0.8.99',
+                version: '0.9.122',
             }
         }
     }
@@ -151,9 +151,20 @@
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="less">
-    @import '~vux/src/styles/1px.less';
+
     .box-flex {
         display: flex;
+    }
+
+    .box-flex>div {
+        flex: 1;
+        text-align: center;
+        font-size: 12px;
+    }
+
+    .box-flex .span {
+        padding-top: 5px;
+        color: #f74c31;
     }
 
     .box-content {
@@ -166,17 +177,6 @@
 
     .card-padding {
         padding: 20px;
-    }
-
-    .box-flex>div {
-        flex: 1;
-        text-align: center;
-        font-size: 12px;
-    }
-
-    .box-flex .span {
-        padding-top: 5px;
-        color: #f74c31;
     }
 
     .income {
