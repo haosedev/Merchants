@@ -160,3 +160,13 @@ Cart 付款按钮制作完成
 
 ###最终安卓系统的Bug###
 登陆完成后，自动保存localStorage和sessionStorage失败。安卓不支持
+// 设置支持本地存储
+mWebView.getSettings().setDatabaseEnabled(true);
+//取得缓存路径
+String path = getActivity().getApplicationContext().getDir("cache", Context.MODE_PRIVATE).getPath();
+//设置路径
+mWebView.getSettings().setDatabasePath(path);
+//设置支持DomStorage
+mWebView.getSettings().setDomStorageEnabled(true);
+//设置存储模式
+mWebView.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
